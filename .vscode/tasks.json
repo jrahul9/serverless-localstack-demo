@@ -1,0 +1,12 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Wait Remote Debugger Server",
+            "type": "shell",
+            "command": "while [[ -z $(docker ps | grep :9229) ]]; do sleep 1; done; sleep 1;"
+        }
+    ]
+}

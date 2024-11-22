@@ -1,0 +1,51 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+# org: nullll
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+# app: demo
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: serverless-localstack-demo
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+  processMessage:
+    handler: handler.processMessage
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [MyQueue, Arn]
+          batchSize: 5
+resources:
+  Resources:
+    MyQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: my-queue
+    MyApi:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: "my-api"
+        Description: "API for LocalStack demo"
+
+plugins:
+  - serverless-localstack   
+
+custom:
+  localstack:
+    stages:
+      - local
+    debug: true
+    host: http://localhost
+    edgePort: 4566
+    autostart: true
+    lambda:
+      mountCode: true
